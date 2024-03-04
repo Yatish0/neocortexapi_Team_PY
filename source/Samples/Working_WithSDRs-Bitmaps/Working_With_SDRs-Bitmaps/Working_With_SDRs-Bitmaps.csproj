@@ -23,6 +23,9 @@
     <Reference Include="NeoCortexApi">
       <HintPath>..\..\..\..\..\neocortexapi_Team_PY\source\NeoCortexApi\bin\Debug\netstandard2.1\NeoCortexApi.dll</HintPath>
     </Reference>
+    <Reference Include="NeoCortexEntities">
+      <HintPath>..\..\..\NeoCortexApi\bin\Debug\netstandard2.1\NeoCortexEntities.dll</HintPath>
+    </Reference>
     <Reference Include="NeoCortexUtils">
       <HintPath>..\..\..\..\..\neocortexapi_Team_PY\source\NeoCortexUtils\bin\Debug\net5.0\NeoCortexUtils.dll</HintPath>
     </Reference>
