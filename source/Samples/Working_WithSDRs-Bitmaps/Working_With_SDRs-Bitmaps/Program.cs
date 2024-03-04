@@ -1,187 +1,435 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NeoCortex;
-using NeoCortexApi;
-using NeoCortexApi.Encoders;
-using NeoCortexApi.Utility;
+﻿using GemBox.Spreadsheet;
+using GemBox.Spreadsheet.Charts;
+using GemBox.Spreadsheet.Drawing;
+//using NeoCortexApi;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 
-namespace WorkingWithSDR
+namespace NeoCortex
 {
-    public class Program
+    /// <summary>
+    /// Sparse distributed representations 
+    /// </summary>
+    public class SdrRepresentation
     {
-        public static void Main()
+
+        /// <summary>
+        /// Creates a vector which consists of common no of "1's" in two input vectors/SDRs
+        /// </summary>
+        /// <param arr1="1st array"></param>
+        /// <param arr2="2nd array"></param>
+        /// <returns></returns>
+        public static int[] OverlapArraFun(int[] arr1, int[] arr2)
         {
-            /// User can directly compair two scalar values between 0 to 99.
+            // TODO: why do we need to assign arr1 and arr2 to new array???
 
-            var outFolder = @"EncoderOutputImages\ScalerEncoderOutput";
-
-            //int[] d = new int[] { 1, 4, 5, 7, 8, 9 };     
-            Console.WriteLine("Welcome to the SDR Representation project. Please enter two numbers (0-99) to find SDR as Indices and Text, Bitmaps, Overlap, Union and Intersection");
-            Console.Write("Please enter First Number: ");
-            int ch1 = Convert.ToInt16(Console.ReadLine());
-            Console.Write("Please enter Second Number: ");
-            int ch2 = Convert.ToInt16(Console.ReadLine());
-
-
-            int[] d = new int[] { ch1, ch2 };
-            ScalarEncoderTest(d, ch1, ch2);
-
-            Directory.CreateDirectory(outFolder);
-
-            Console.WriteLine("SDR Representation using ScalarEncoder");
-
-
-            for (int input = 1; input < (int)6; input++)
-            {
-                //double input = 1.10;
-
-
-                ScalarEncoder encoder = new ScalarEncoder(new Dictionary<string, object>()
-                    {
-                        { "W", 25},
-                        { "N", (int)0},
-                        { "Radius", (double)2.5},
-                        { "MinVal", (double)1},
-                        { "MaxVal", (double)50},
-                        { "Periodic", false},
-                        { "Name", "Scalar Encoder"},
-                        { "ClipInput", false},
-                    });
-
-                var result = encoder.Encode(input);
-                Debug.WriteLine($"Input = {input}");
-                Debug.WriteLine($"SDRs Generated = {NeoCortexApi.Helpers.StringifyVector(result)}");
-                Debug.WriteLine($"SDR As Indices = {NeoCortexApi.Helpers.StringifyVector(ArrayUtils.IndexWhere(result, k => k == 1))}");
-
-                int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result, (int)Math.Sqrt(result.Length), (int)Math.Sqrt(result.Length));
-                var twoDimArray = ArrayUtils.Transpose(twoDimenArray);
-
-                NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{outFolder}\\{input}.png", Color.Yellow, Color.Black, text: input.ToString());
-
-            }
-
-
-        }
-
-        private static void ScalarEncoderTest(int[] inputs, int a, int b)
-        {
-            var outFolder1 = @"NEWTestFiles\NEWScalarEncoderResults";
-            var outFolder2 = @"Overlap_Union";
-
-            Directory.CreateDirectory(outFolder1);
-            Directory.CreateDirectory(outFolder2);
-            ScalarEncoder encoder = new ScalarEncoder(new Dictionary<string, object>()
-            {
-                { "W", 3},       // 2% Approx 
-                { "N", 100},
-                { "MinVal", (double)0},
-                { "MaxVal", (double)99},
-                { "Periodic", true},
-                { "Name", "Scalar Sequence"},
-                { "ClipInput", true},
-            });
-            Dictionary<double, int[]> sdrs = new Dictionary<double, int[]>();
-
-
-            foreach (double input in inputs)
-            {
-                int[] result = encoder.Encode(input);
-
-                Console.WriteLine($"Input = {input}");
-                Console.WriteLine($"SDRs Generated = {NeoCortexApi.Helpers.StringifyVector(result)}");
-                Console.WriteLine($"SDR As Text = {NeoCortexApi.Helpers.StringifyVector(ArrayUtils.IndexWhere(result, k => k == 1))}");
-
-
-                int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result, (int)Math.Sqrt(result.Length), (int)Math.Sqrt(result.Length));
-                int[,] twoDimArray = ArrayUtils.Transpose(twoDimenArray);
-                NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{outFolder1}\\{input}.png", Color.PaleGreen, Color.Blue, text: input.ToString());
-
-                sdrs.Add(input, result);
-
-
-            }
-
-
-            // <summary>
-            /// Calculate all required results.
-            /// 1. Overlap and Union of the Binary arrays of two scalar values.
-            ///    It cross compares the binary arrays  of any of the two scalar values User enters.
-            /// 2. Creates bitmaps of the overlaping and non-overlaping regions of the two binary arrays entered by the User.
-            /// 3. Creates bitmaps of interestion of Overlap and Union of two values.
-            /// </summary>
-
-            //Console.WriteLine("Encoder Binary array Created");
-            // Console.WriteLine("Enter the two elements you want to Compare");
-            // String a = Console.ReadLine();
-            //String b = Console.ReadLine();
-
-
-            // SimilarityResult(Convert.ToInt32(a), Convert.ToInt32(b), sdrs, outFolder1);
-            SimilarityResult(a, b, sdrs, outFolder1);
-        }
-
-        private static void SimilarityResult(int arr1, int arr2, Dictionary<double, int[]> sdrs, String folder)              // Function to check similarity between Inputs 
-        {
-
-
-            List<int[,]> arrayOvr = new List<int[,]>();
-
-            int h = arr1;
-            int w = arr2;
-
-            Console.WriteLine("SDR[h] = ");
-
-            Console.WriteLine(Helpers.StringifyVector(sdrs[h]));
-
-            Console.WriteLine("SDR[w] = ");
-
-
-
-            Console.WriteLine(Helpers.StringifyVector(sdrs[w]));
-
-            var Overlaparray = SdrRepresentation.OverlapArraFun(sdrs[h], sdrs[w]);
-            Console.WriteLine("SDR of Overlap = ");
-            Console.WriteLine(Helpers.StringifyVector(Overlaparray));
-            int[,] twoDimenArray2 = ArrayUtils.Make2DArray<int>(Overlaparray, (int)Math.Sqrt(Overlaparray.Length), (int)Math.Sqrt(Overlaparray.Length));
-            int[,] twoDimArray1 = ArrayUtils.Transpose(twoDimenArray2);
-            NeoCortexUtils.DrawBitmap(twoDimArray1, 1024, 1024, $"{folder}\\Overlap_{h}_{w}.png", Color.PaleGreen, Color.Red, text: $"Overlap_{h}_{w}.png");
-
-            //var unionArr = sdrs[h].Union(sdrs[w]).ToArray();                              //This function was not working. so, new Union function is created.
-            var unionArr = Union(sdrs[h], sdrs[w]).ToArray();
-            Console.WriteLine("SDR of Union = ");
-            Console.WriteLine(Helpers.StringifyVector(unionArr));
-            int[,] twoDimenArray4 = ArrayUtils.Make2DArray<int>(unionArr, (int)Math.Sqrt(unionArr.Length), (int)Math.Sqrt(unionArr.Length));
-            int[,] twoDimArray3 = ArrayUtils.Transpose(twoDimenArray4);
-
-            NeoCortexUtils.DrawBitmap(twoDimArray3, 1024, 1024, $"{folder}\\Union_{h}_{w}.png", Color.PaleGreen, Color.Green, text: $"Union_{h}_{w}.png");
-            SdrRepresentation.DrawIntersections(twoDimArray3, twoDimArray1, 100, $"{folder}\\Intersection of Union and Overlap of {h}_{w}.png", Color.Black, Color.Gray, text: $"Intersection.png");
-
-        }
-
-        public static int[] Union(int[] arr1, int[] arr2)                        // To find union of of the Binary arrays of two scalar values.
-        {
-
-
-            int[] union = new int[arr1.Length];
-
+            int[] nw = arr1;
+            int[] old = arr2;
+            int[] ovrlap = new int[arr1.Length]; //Math.Min(arr1.Length, arr2.Length);
             for (int i = 0; i < arr1.Length; i++)
             {
-
-                if (arr1[i] == 0 && arr2[i] == 0)
+                //
+                // TODO: what happen if arr1 has more elements than arr2: throw IndexOutOfRangeException
+                if (nw[i] == 1 && old[i] == 1)
                 {
-                    union[i] = 0;
+                    ovrlap[i] = 1;
                 }
                 else
                 {
-                    union[i] = 1;
+                    ovrlap[i] = 0;
+                }
+
+            }
+            return ovrlap;
+        }
+
+        /// <summary>
+        /// Creates a vector which consists of all no of "1's" in two input vectors/SDRs
+        /// </summary>
+        /// <returns></returns>
+        public static int[] ArrayUnion(List<int[]> arrList)
+        {
+            // The length of the Union array is the length of the maximum length of array in the list
+            int arrayLengthUnion = 0;
+
+            foreach (int[] arr in arrList)
+            {
+                if (arr.Length > arrayLengthUnion)
+                {
+                    arrayLengthUnion = arr.Length;
                 }
             }
-            return union;
+            int[] unionArray = new int[arrayLengthUnion];
+            foreach (int[] arr in arrList)
+            {
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    unionArray[i] = ((unionArray[i] + arr[i]) >= 1) ? 1 : 0;
+                }
+            }
+            return unionArray;
+        }
+
+
+        /// <summary>
+        /// Converts active columns index array into to binary array 
+        /// </summary>
+        /// <param activeCols="active Columns of SDR"></param>
+        /// <param numOfCols="size of the output vector"></param>
+        /// <returns></returns>
+        public static int[] GetIntArray(int[] activeCols, int numOfCols)
+        {
+            int[] a = new int[numOfCols];
+            int c1 = 0;
+            for (int i = 0; i < numOfCols; i++)
+            {
+
+                if (i == activeCols[c1])
+                {
+                    a[i] = 1;
+                    c1++;
+                }
+                else
+                {
+                    a[i] = 0;
+                }
+
+                if (c1 == activeCols.Length)
+                { break; }
+            }
+
+            return a;
+
+        }
+
+
+        /// <summary>
+        /// Show SDR in "Column/Overlap Ratio" and generate its Excel file 
+        /// </summary>
+        /// <param overlapArrays="Contains the overlaps of the columns during SDR learning of Spatial Pooler"></param>
+        /// <param swActCol1="to write in Excel file"></param>
+        /// <returns>Max overlap.</returns>
+
+        public static int TraceColumnsOverlap(List<double[,]> overlapArrays, StreamWriter swActCol1, string testName)
+        {
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+
+            // Continue to use the component in a Trial mode when free limit is reached.
+            SpreadsheetInfo.FreeLimitReached += (sender, e) => e.FreeLimitReachedAction = FreeLimitReachedAction.ContinueAsTrial;
+
+            var workbook = new ExcelFile();
+            var worksheet = workbook.Worksheets.Add("Chart");
+            // var v = overlapArrays.ToArray();
+            int max = 0;
+            int index = 0;
+            int in2 = 0;
+            swActCol1.WriteLine($"Column / Overlaps");
+            for (int c = 0; c < 1; c++)
+            {
+                for (int i = 0; i < 64; i++)
+                {
+                    for (int j = 0; j < 64; j++)
+                    {
+                        int s = (int)overlapArrays[c][i, j];
+
+
+                        swActCol1.WriteLine($"Column: {index} / Overlaps: {s}");
+
+                        //
+                        // Add data which will be used by the Excel chart.
+                        worksheet.Cells["A1"].Value = "Column /";
+                        worksheet.Cells["B1"].Value = "Overlap";
+                        worksheet.Cells[in2, 0].SetValue(index);
+                        worksheet.Cells[in2, 1].SetValue(s);
+
+
+                        in2++;
+
+                        if (s > max)
+                            max = s;
+                        index++;
+                    }
+                }
+            }
+
+            // Set header colIdx and formatting.
+            worksheet.Rows[0].Style.Font.Weight = ExcelFont.BoldWeight;
+            worksheet.Columns[0].Width = (int)LengthUnitConverter.Convert(3, LengthUnit.Centimeter, LengthUnit.ZeroCharacterWidth256thPart);
+
+            // Make entire sheet print on a single page.
+            worksheet.PrintOptions.FitWorksheetWidthToPages = 1;
+            worksheet.PrintOptions.FitWorksheetHeightToPages = 1;
+
+            // Create Excel chart and select data for it.
+            var chart = worksheet.Charts.Add<LineChart>("D2", "P25");
+            chart.SelectData(worksheet.Cells.GetSubrangeAbsolute(0, 0, in2, 1), true);
+
+            // Define colors
+            var backgroundColor = DrawingColor.FromName(DrawingColorName.RoyalBlue);
+            var seriesColor = DrawingColor.FromName(DrawingColorName.Green);
+            var textColor = DrawingColor.FromName(DrawingColorName.White);
+            var borderColor = DrawingColor.FromName(DrawingColorName.Black);
+
+            // Format chart
+            chart.Fill.SetSolid(backgroundColor);
+
+            var outline = chart.Outline;
+            outline.Width = Length.From(2, LengthUnit.Point);
+            outline.Fill.SetSolid(borderColor);
+
+            // Format plot area
+            chart.PlotArea.Fill.SetSolid(DrawingColor.FromName(DrawingColorName.White));
+
+            outline = chart.PlotArea.Outline;
+            outline.Width = Length.From(1.5, LengthUnit.Point);
+            outline.Fill.SetSolid(borderColor);
+
+            // Format chart title 
+            var textFormat = chart.Title.TextFormat;
+            textFormat.Size = Length.From(1, LengthUnit.Point);
+            textFormat.Font = "Arial";
+            textFormat.Font = "Arial";
+            textFormat.Fill.SetSolid(textColor);
+
+            // Format vertical axis
+            textFormat = chart.Axes.Vertical.TextFormat;
+            textFormat.Fill.SetSolid(textColor);
+            textFormat.Italic = true;
+
+            // Format horizontal axis
+            textFormat = chart.Axes.Horizontal.TextFormat;
+            textFormat.Fill.SetSolid(textColor);
+            textFormat.Size = Length.From(1, LengthUnit.Point);
+            textFormat.Bold = true;
+
+            // Format vertical major gridlines
+            chart.Axes.Vertical.MajorGridlines.Outline.Width = Length.From(1, LengthUnit.Point);
+
+            workbook.Save($"{testName}.xlsx");
+
+            return max;
+        }
+
+        /// <summary>
+        /// Generate intersection between two SDRs
+        /// </summary>
+        /// <param twoDimArray="Overlap array of SDR"></param>
+        /// <param woDimArray2="Union array of SDR"></param>
+        /// <returns></returns>
+        public static void DrawIntersections(int[,] twoDimArray, int[,] twoDimArray2, int scale, String filePath, Color inactiveCellColor, Color activeCellColor, string text = null)
+        {
+            int w = twoDimArray.GetLength(0);
+            int h = twoDimArray.GetLength(1);
+
+            System.Drawing.Bitmap myBitmap = new System.Drawing.Bitmap(w * scale, h * scale);
+            int k = 0;
+            for (int Xcount = 0; Xcount < w; Xcount++)
+            {
+                for (int Ycount = 0; Ycount < h; Ycount++)
+                {
+                    for (int padX = 0; padX < scale; padX++)
+                    {
+                        for (int padY = 0; padY < scale; padY++)
+                        {
+                            if (twoDimArray[Xcount, Ycount] == 1)
+                            {
+
+                                if (twoDimArray[Xcount, Ycount] == 1 && twoDimArray2[Xcount, Ycount] == 1)
+                                {
+                                    myBitmap.SetPixel(Xcount * scale + padX, Ycount * scale + padY, Color.Red);
+                                    k++;
+                                }
+                                else
+                                {
+
+                                    myBitmap.SetPixel(Xcount * scale + padX, Ycount * scale + padY, activeCellColor);
+                                    k++;
+                                }
+
+
+
+                            }
+                            else
+                            {
+
+                                myBitmap.SetPixel(Xcount * scale + padX, Ycount * scale + padY, inactiveCellColor);
+                                k++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Graphics g = Graphics.FromImage(myBitmap);
+            var fontFamily = new FontFamily(System.Drawing.Text.GenericFontFamilies.SansSerif);
+            g.DrawString(text, new Font(fontFamily, 32), SystemBrushes.Control, new PointF(0, 0));
+
+            myBitmap.Save(filePath, ImageFormat.Png);
+        }
+
+        // To trace out the column Overlap values in Excel, Line trace and Graph format
+        /// <summary>
+        /// <br>values: Text, Excel or Graph</br>
+        /// </summary>
+        public enum TraceFormat
+        {
+            Text,
+            Excel,
+            Graph,
+        }
+        /// <summary>
+        /// <br>Choice function for ease of switching between the modes</br>
+        /// <br>The functions called inside can also be called independently</br>
+        /// <br>TraceColumnsOverlap()</br>
+        /// <br>TraceInLineFormat()</br>
+        /// <br>TraceInGraphFormat()</br>
+        /// </summary>
+        /// <param name="overlapArrays"></param>
+        /// <param name="colDims"></param>
+        /// <param name="formatTypes"></param>
+        /// <param name="threshold"></param>
+        /// <param name="aboveThreshold"></param>
+        /// <param name="belowThreshold"></param>
+        public static void TraceColumnsOverlap(List<int[,]> overlapArrays, int[] colDims, TraceFormat formatTypes, int threshold, Color aboveThreshold, Color belowThreshold)  //To Trace out the Columns /Overlap count
+        {
+            switch (formatTypes)
+            {
+                case TraceFormat.Text:
+                    TraceInLineFormat(overlapArrays, colDims);
+                    break;
+
+                case TraceFormat.Graph:
+                    TraceInGraphFormat(overlapArrays, colDims, threshold, aboveThreshold, belowThreshold);
+                    break;
+
+                case TraceFormat.Excel:
+                    TraceInExcelFormat(overlapArrays, colDims);
+                    break;
+
+                default:
+                    //Debug.WriteLine($"Not A correct Trace Format! ");
+                    break;
+            }
+
+        }
+
+        /// <summary>
+        /// <br>To trace out the column Overlap values and output them to a txt file.</br>
+        /// <br>at SdrRepresentation_Output/TraceInLineFormat.txt </br>
+        /// <br>Needs to Include link md to description</br>
+        /// </summary>
+        /// <param name="overlapArrays">overlap result from calling an object of type Connection.OverLaps</param>
+        /// <param name="colDims">dimension in [width, length] array</param>        
+        public static void TraceInLineFormat(List<int[,]> overlapArrays, int[] colDims)
+        {
+            List<string> vs = new List<string>();
+            int column = 0;
+            foreach (var entry in overlapArrays)
+            {
+                for (int i = 0; i < colDims[0]; ++i)
+                {
+                    for (int j = 0; j < colDims[1]; ++j)
+                    {
+                        vs.Add($"{column},{entry[i, j]}");
+                        column++;
+                    }
+                }
+            }
+            if (!Directory.Exists("SdrRepresentation_Output"))
+            {
+                Directory.CreateDirectory("SdrRepresentation_Output");
+            }
+            File.WriteAllLines("SdrRepresentation_Output/TraceInLineFormat.txt", vs.ToArray());
+        }
+
+        /// <summary>
+        /// <br>To represent the column overlap values in graph format</br>
+        /// <br>The current default output size of the graph is 500, 524</br>
+        /// <br>Needs to Include link md to description</br>
+        /// </summary>
+        /// <param name="overlapArrays">overlap result from calling an object of type Connection.OverLaps</param>
+        /// <param name="dims">dimension in [width, length] array</param>
+        /// <param name="threshold"></param>
+        /// <param name="aboveThreshold"></param>
+        /// <param name="belowThreshold"></param>
+        public static void TraceInGraphFormat(List<int[,]> overlapArrays, int[] dims, int threshold, Color aboveThreshold, Color belowThreshold, int width = 500, int height = 524, string pngFileName = "overlap.png")
+        {
+            int colIdx = 0;
+
+            Image image = new Bitmap(width, height);
+
+            Graphics graph = Graphics.FromImage(image);
+
+            graph.Clear(Color.Azure);
+            Pen pen;
+
+            foreach (var entry in overlapArrays)
+            {
+                for (int i = 0; i < dims[0]; ++i)
+                {
+                    for (int j = 0; j < dims[1]; ++j)
+                    {
+                        if (entry[i, j] > threshold)
+                        {
+                            pen = new Pen(aboveThreshold);
+                        }
+                        else
+                        {
+                            pen = new Pen(belowThreshold);
+                        }
+
+                        graph.DrawLines(pen, new Point[] { new Point(colIdx, height - (int)entry[i, j]), new Point(colIdx, height) });
+
+                        colIdx++;
+                    }
+                }
+            }
+
+            graph.DrawLines(new Pen(Color.Blue), new Point[] { new Point(0, height - threshold), new Point(dims[1], height - threshold) });
+
+            image.Save(pngFileName, System.Drawing.Imaging.ImageFormat.Png);
+        }
+
+        /// <summary>
+        /// <br>To export the column overlap values to excel</br>
+        /// <br>Needs to Include link md to description</br>
+        /// </summary>
+        /// <param name="overlapArrays">overlap result from calling an object of type Connection.OverLaps</param>
+        /// <param name="colDims">dimension in [width, length] array</param>       
+        public static void TraceInExcelFormat(List<int[,]> overlapArrays, int[] colDims)
+        {
+            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            SpreadsheetInfo.FreeLimitReached += (sender, e) => e.FreeLimitReachedAction = FreeLimitReachedAction.ContinueAsTrial;
+            var workbook = new ExcelFile();
+            var worksheet = workbook.Worksheets.Add("TraceColumnOverlap");
+            worksheet.Cells["A1"].Value = "Tracing out all the values for Column overlap:";
+            worksheet.Cells["A2"].Value = "Column";
+            worksheet.Cells["B2"].Value = "Overlap Value";
+
+            // Write header data to Excel cells.
+            int colval = 2;
+            int indexVal = 0;
+            foreach (var entry in overlapArrays)
+            {
+                for (int i = 0; i < colDims[0]; ++i)
+                {
+                    for (int j = 0; j < colDims[1]; ++j)
+                    {
+                        worksheet.Cells[colval, 0].SetValue(indexVal);
+                        worksheet.Cells[colval, 1].SetValue(entry[i, j]);
+                        colval++;
+                        indexVal++;
+                    }
+                }
+            }
+            if (!Directory.Exists("SdrRepresentation_Output"))
+            {
+                Directory.CreateDirectory("SdrRepresentation_Output");
+            }
+            workbook.Save("SdrRepresentation_Output/ColumnOverlapTracing.xlsx");
         }
 
     }
