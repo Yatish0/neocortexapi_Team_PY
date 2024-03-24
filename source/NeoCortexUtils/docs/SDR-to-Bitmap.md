@@ -26,7 +26,7 @@ public Dictionary<string, object> GetDefaultEncoderSettings()
 ```
 Encoders need to be first initialized with pre-defined settings using its constructor. Encoder settings are created as a Dictionary consists of properties and their values. Following code snippet illustrates how to create encoder settings:
 
-## Parameter definition
+### Parameter Definition
 | Parameter	   | Data type | Definition |
 | -------------| ------------- | -------- |
 | ```N```|  Integer  | The number of bits in the output. Must be greater than or equal to ``W``|
@@ -82,7 +82,7 @@ The key steps in the ```DrawBitmap()``` method are as follows:
 - The bitmap is generated and saved in the specified file path.
 
 
-## Parameters:
+### Parameters:
 
 - **twoDimArray:** Array of active columns.
 - **width:** Output width of the bitmap.
@@ -144,6 +144,153 @@ Scalar encoding is a technique used to convert continuous scalar values into Spa
 By partitioning the input range into smaller bins and activating specific bits within each bin, scalar encoding generates binary vectors that represent numerical values. 
 
 These binary vectors, or SDRs, are sparse, meaning only a small fraction of bits are active at any given time, preserving semantic information in a high-dimensional space.Scalar encoding facilitates the representation of numerical data in a format suitable for processing by neural networks, enabling tasks such as classification, regression, and anomaly detection.
+
+```C#
+public void ScalarEncodingExperiment()
+{
+    string outFolder = nameof(ScalarEncodingExperiment);
+    Directory.CreateDirectory(outFolder);
+    DateTime now = DateTime.Now;
+    ScalarEncoder encoder = new ScalarEncoder(new Dictionary<string, object>()
+    {
+        { "W", 21},
+        { "N", 1024},
+        { "Radius", -1.0},
+        { "MinVal", 0.0},
+        { "MaxVal", 100.0 },
+        { "Periodic", false},
+        { "Name", "scalar"},
+        { "ClipInput", false},
+    });
+    for (double i = 0.0; i < (long)encoder.MaxVal; i += 0.1)
+    {
+        int[] result = encoder.Encode(i);
+        int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result, (int)Math.Sqrt(result.Length), (int)Math.Sqrt(result.Length));
+        int[,] twoDimArray = ArrayUtils.Transpose(twoDimenArray);
+        NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{outFolder}\\{i}.png", Color.Yellow, Color.Black, text:i.ToString());
+    }
+}
+```
+The following table visualizes the result from several numbers of the above unit test using NeoCortexUtils.DrawBitmap():
+|``Number``| ``0.1`` |``0.3``|``17.6``|``18.0``|
+|----------|---------|-------|--------|--------|
+|Results| ![0 1](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/c1c3eb66-36bb-4bc3-9716-bdd8daa4ee6b) |![0 3](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d15499dc-f5ff-4ce1-a734-a0d9457fbb31)|![17 6](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/4741ec02-b7a0-4f30-8586-aea1d8445966)|![18 0](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/f4b7f769-8977-41af-b31b-df3c7f23234e)|
+
+
+Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/ScalarEncoderTests.cs) 
+
+
+## DateTime Encoder
+
+The DateTime Encoder is a component used to encode date and time information into SDRs.
+
+The DateTime Encoder is initialized with specific settings include parameters such as the width (W) and number of bits (N) for the encoder, minimum and maximum values, periodicity, and padding. Once initialized, the encoder's Encode() method is invoked with a specific date and time input.
+
+This method processes the input and a one-dimensional array (1-D array) is generated, which represents a Sparse Distributed Representation (SDR).
+
+The resulting SDR can be represented both as text and as a bitmap.
+
+In bitmap representation, the SDR is converted into a 2-D array (twoDimArray), and then the SDRs can be further visualized using tools like DrawBitmap(), which generates bitmap images from the SDRs.
+
+```C#
+public void EncodeDateTimeTest(int w, double r, Object input, int[] expectedOutput)
+{
+    CortexNetworkContext ctx = new CortexNetworkContext();
+    DateTimeOffset now = DateTimeOffset.Now;
+    Dictionary<string, Dictionary<string, object>> encoderSettings = new Dictionary<string, Dictionary<string, object>>();
+    encoderSettings.Add("DateTimeEncoder", new Dictionary<string, object>()
+        {
+            { "W", 21},
+            { "N", 1024},
+            { "MinVal", now.AddYears(-10)},
+            { "MaxVal", now},
+            { "Periodic", false},
+            { "Name", "DateTimeEncoder"},
+            { "ClipInput", false},
+            { "Padding", 5},
+        });
+    DateTimeEncoder encoder = new DateTimeEncoder(encoderSettings, DateTimeEncoder.Precision.Days);
+    int[] result = encoder.Encode(DateTimeOffset.Parse(input.ToString()));
+    Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(result));
+    //Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(expectedOutput));
+    int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result, 32, 32);
+    int[,] twoDimArray = ArrayUtils.Transpose(twoDimenArray);
+    NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"DateTime_out_{input.ToString().Replace("/", "-").Replace(":", "-")}_32x32-N-{encoderSettings["DateTimeEncoder"]["N"]}-W-{encoderSettings["DateTimeEncoder"]["W"]}.png");
+   // Assert.IsTrue(result.SequenceEqual(expectedOutput));
+}
+```
+The following table visualizes the result from several ``input`` of the above unit test using ``NeoCortexUtils.DrawBitmap()``:
+
+|``input``| ``"05/07/2011 21:58:07"	`` |``"06/07/2012 21:58:07"	``|``"07/07/2013 21:58:07"``|``"08/07/2014 21:58:07"``|
+|----------|---------|-------|--------|--------|
+|Results|![DateTime_out_05-07-2011 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/84415515-4a61-4195-ae4f-ba82d1dc7484) |![DateTime_out_06-07-2012 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3dee3db4-e272-4eaf-b7c5-e020d91fe687)|![DateTime_out_07-07-2013 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/5c371a76-6701-44aa-a32c-4450f9719ee4)|![DateTime_out_08-07-2014 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d06edb69-1e89-4b42-9da9-be57c51407ea)|
+
+
+Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/DateTimeEncoderTests.cs) 
+
+## Geo-Spatial Encoder
+
+The Geospatial Encoder facilitates the conversion of geospatial data into binary arrays and enables the visualization of this data as bitmap images. In the exploration of geospatial data through Sparse Distributed Representations (SDRs), we utilize the DrawBitmap method to translate encoded geographical coordinates into visually interpretable bitmap images. This approach allows for the visualization of spatial information encoded within SDRs, offering insights into the encoded geographical regions.
+
+```C#
+public int[] GermanyToItalyLongitude(double input)
+{
+
+    // CortexNetworkContext ctx = new CortexNetworkContext();
+
+    GeoSpatialEncoderExperimental encoder = new GeoSpatialEncoderExperimental(new Dictionary<string, object>()
+    {
+        { "W", 21},
+        { "N", 40},
+        { "Radius", 1.5},
+        { "Resolution", 0.016},
+        { "MinVal", (double)48.75},// longitude value of Italy
+        { "MaxVal", (double)51.86},// longitude value of germany
+        { "Periodic", (bool)false},
+        { "Name", "longitude"},
+        { "ClipInput", (bool)true)}, // it is use as if the value is less then Min and more then max , it will chlip the input as per the value and if is FAlse then it will give error
+    });
+
+
+    int[] result = encoder.Encode(input);// it use for encoding the input according to the given parameters.
+                                       // printImage(encoder, nameof(GermanyToItalyLongitude));// ít is use to generate the bit map image
+                                       // Debug.WriteLine(input);
+                                       //Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(result));
+                                       //Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(expectedResult));
+    return result;
+
+}
+```
+The following table visualizes the result from several ``input`` of the above unit test using ``NeoCortexUtils.DrawBitmap()``:
+|``input``| ``48`` |``"49	``|``"50"``|
+|----------|---------|-------|--------|
+|Results|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/016ba7c6-04b3-40f0-a42b-da3b2e059659)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/128e385a-73bb-43f5-a7fb-2f325079586f)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/46e63ffc-7468-4ac3-8cb8-5742b2d08011)|
+
+Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/GeoSpatialEncoderExperimentalTests.cs) 
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
+
+.
 ## Examples
 
 ### DrawBitmap sample for DateTime Encoder
