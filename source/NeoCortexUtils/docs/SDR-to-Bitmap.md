@@ -6,6 +6,8 @@ This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder,
 
 The Bitmap Representation of SDRs is to provide a visual representation of the generated SDRs. This visualization helps in analyzing the encoded information, debugging the models, and communicating the results effectively.
 
+
+
 ## Encoder
 Encoding real-world data into SDRs is a very important process to understand in HTM. Semantic meaning within the input data must be encoded into a binary representation. 
 
@@ -67,6 +69,9 @@ int[] result = encoder.Encode(input);
 
 The ``ScalarEncoder`` encodes number 99.6 and produces the following output with the previous encoder settings.
 
+
+
+
 ## DrawBitmap Method
 
 The method involves generating bitmap images from arrays of active columns using a common method ```DrawBitmap()```  for all the encoders and spatial pooler. This method takes several parameters such as the array of active columns, output width and height, file path for saving the bitmap, colors for inactive and active cells, and optional text to be written with the bitmap.
@@ -111,6 +116,8 @@ The below method is used to generate a bitmap image.
 NeoCortexUtils.DrawBitmap(twoDimArray, 1024,1024, $"{outFolder}\\{input}.png", Color.Yellow,Color.Black, text: input.ToString());
 ```
 
+
+
 ## 1-D array and 2-D array
 
 1-D array is one-dimensional array, also known as a **vector or list**, is a linear collection of elements stored in contiguous memory locations.
@@ -139,209 +146,17 @@ In this document, ```Encode()``` method processes the input and a one-dimensiona
 ```C#
 int[,] twoDimenArray2 = ArrayUtils.Make2DArray<int>(result2, (int)Math.Sqrt(result2.Length), (int)Math.Sqrt(result2.Length));
 ```
-## ScalarEncoder
+
+
+
+
+## SDR Generation Using ScalarEncoder
 Scalar encoding is a technique used to convert continuous scalar values into Sparse Distributed Representations (SDRs), commonly employed in neural network models.
 By partitioning the input range into smaller bins and activating specific bits within each bin, scalar encoding generates binary vectors that represent numerical values. 
 
 These binary vectors, or SDRs, are sparse, meaning only a small fraction of bits are active at any given time, preserving semantic information in a high-dimensional space.Scalar encoding facilitates the representation of numerical data in a format suitable for processing by neural networks, enabling tasks such as classification, regression, and anomaly detection.
 
-```C#
-public void ScalarEncodingExperiment()
-{
-    string outFolder = nameof(ScalarEncodingExperiment);
-    Directory.CreateDirectory(outFolder);
-    DateTime now = DateTime.Now;
-    ScalarEncoder encoder = new ScalarEncoder(new Dictionary<string, object>()
-    {
-        { "W", 21},
-        { "N", 1024},
-        { "Radius", -1.0},
-        { "MinVal", 0.0},
-        { "MaxVal", 100.0 },
-        { "Periodic", false},
-        { "Name", "scalar"},
-        { "ClipInput", false},
-    });
-    for (double i = 0.0; i < (long)encoder.MaxVal; i += 0.1)
-    {
-        int[] result = encoder.Encode(i);
-        int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result, (int)Math.Sqrt(result.Length), (int)Math.Sqrt(result.Length));
-        int[,] twoDimArray = ArrayUtils.Transpose(twoDimenArray);
-        NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{outFolder}\\{i}.png", Color.Yellow, Color.Black, text:i.ToString());
-    }
-}
-```
-The following table visualizes the result from several numbers of the above unit test using NeoCortexUtils.DrawBitmap():
-|``Number``| ``0.1`` |``0.3``|``17.6``|``18.0``|
-|----------|---------|-------|--------|--------|
-|Results| ![0 1](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/c1c3eb66-36bb-4bc3-9716-bdd8daa4ee6b) |![0 3](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d15499dc-f5ff-4ce1-a734-a0d9457fbb31)|![17 6](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/4741ec02-b7a0-4f30-8586-aea1d8445966)|![18 0](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/f4b7f769-8977-41af-b31b-df3c7f23234e)|
-
-
-Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/ScalarEncoderTests.cs) 
-
-
-## DateTime Encoder
-
-The DateTime Encoder is a component used to encode date and time information into SDRs.
-
-The DateTime Encoder is initialized with specific settings include parameters such as the width (W) and number of bits (N) for the encoder, minimum and maximum values, periodicity, and padding. Once initialized, the encoder's Encode() method is invoked with a specific date and time input.
-
-This method processes the input and a one-dimensional array (1-D array) is generated, which represents a Sparse Distributed Representation (SDR).
-
-The resulting SDR can be represented both as text and as a bitmap.
-
-In bitmap representation, the SDR is converted into a 2-D array (twoDimArray), and then the SDRs can be further visualized using tools like DrawBitmap(), which generates bitmap images from the SDRs.
-
-```C#
-public void EncodeDateTimeTest(int w, double r, Object input, int[] expectedOutput)
-{
-    CortexNetworkContext ctx = new CortexNetworkContext();
-    DateTimeOffset now = DateTimeOffset.Now;
-    Dictionary<string, Dictionary<string, object>> encoderSettings = new Dictionary<string, Dictionary<string, object>>();
-    encoderSettings.Add("DateTimeEncoder", new Dictionary<string, object>()
-        {
-            { "W", 21},
-            { "N", 1024},
-            { "MinVal", now.AddYears(-10)},
-            { "MaxVal", now},
-            { "Periodic", false},
-            { "Name", "DateTimeEncoder"},
-            { "ClipInput", false},
-            { "Padding", 5},
-        });
-    DateTimeEncoder encoder = new DateTimeEncoder(encoderSettings, DateTimeEncoder.Precision.Days);
-    int[] result = encoder.Encode(DateTimeOffset.Parse(input.ToString()));
-    Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(result));
-    //Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(expectedOutput));
-    int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result, 32, 32);
-    int[,] twoDimArray = ArrayUtils.Transpose(twoDimenArray);
-    NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"DateTime_out_{input.ToString().Replace("/", "-").Replace(":", "-")}_32x32-N-{encoderSettings["DateTimeEncoder"]["N"]}-W-{encoderSettings["DateTimeEncoder"]["W"]}.png");
-   // Assert.IsTrue(result.SequenceEqual(expectedOutput));
-}
-```
-The following table visualizes the result from several ``input`` of the above unit test using ``NeoCortexUtils.DrawBitmap()``:
-
-|``input``| ``"05/07/2011 21:58:07"	`` |``"06/07/2012 21:58:07"	``|``"07/07/2013 21:58:07"``|``"08/07/2014 21:58:07"``|
-|----------|---------|-------|--------|--------|
-|Results|![DateTime_out_05-07-2011 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/84415515-4a61-4195-ae4f-ba82d1dc7484) |![DateTime_out_06-07-2012 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3dee3db4-e272-4eaf-b7c5-e020d91fe687)|![DateTime_out_07-07-2013 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/5c371a76-6701-44aa-a32c-4450f9719ee4)|![DateTime_out_08-07-2014 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d06edb69-1e89-4b42-9da9-be57c51407ea)|
-
-
-Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/DateTimeEncoderTests.cs) 
-
-## Geo-Spatial Encoder
-
-The Geospatial Encoder facilitates the conversion of geospatial data into binary arrays and enables the visualization of this data as bitmap images. In the exploration of geospatial data through Sparse Distributed Representations (SDRs), we utilize the DrawBitmap method to translate encoded geographical coordinates into visually interpretable bitmap images. This approach allows for the visualization of spatial information encoded within SDRs, offering insights into the encoded geographical regions.
-
-```C#
-public int[] GermanyToItalyLongitude(double input)
-{
-
-    // CortexNetworkContext ctx = new CortexNetworkContext();
-
-    GeoSpatialEncoderExperimental encoder = new GeoSpatialEncoderExperimental(new Dictionary<string, object>()
-    {
-        { "W", 21},
-        { "N", 40},
-        { "Radius", 1.5},
-        { "Resolution", 0.016},
-        { "MinVal", (double)48.75},// longitude value of Italy
-        { "MaxVal", (double)51.86},// longitude value of germany
-        { "Periodic", (bool)false},
-        { "Name", "longitude"},
-        { "ClipInput", (bool)true)}, // it is use as if the value is less then Min and more then max , it will chlip the input as per the value and if is FAlse then it will give error
-    });
-
-
-    int[] result = encoder.Encode(input);// it use for encoding the input according to the given parameters.
-                                       // printImage(encoder, nameof(GermanyToItalyLongitude));// ít is use to generate the bit map image
-                                       // Debug.WriteLine(input);
-                                       //Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(result));
-                                       //Debug.WriteLine(NeoCortexApi.Helpers.StringifyVector(expectedResult));
-    return result;
-
-}
-```
-The following table visualizes the result from several ``input`` of the above unit test using ``NeoCortexUtils.DrawBitmap()``:
-|``input``| ``48`` |``"49	``|``"50"``|
-|----------|---------|-------|--------|
-|Results|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/016ba7c6-04b3-40f0-a42b-da3b2e059659)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/128e385a-73bb-43f5-a7fb-2f325079586f)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/46e63ffc-7468-4ac3-8cb8-5742b2d08011)|
-
-Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/GeoSpatialEncoderExperimentalTests.cs) 
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-
-.
-## Examples
-
-### DrawBitmap sample for DateTime Encoder
-The DateTime Encoder is a component used to **encode date and time information** into SDRs. 
-
-The DateTime Encoder is initialized with specific settings include parameters such as the **width (W)** and **number of bits (N)** for the encoder, **minimum and maximum values**, **periodicity**, and **padding**. Once initialized, the encoder's ```Encode()``` method is invoked with a specific date and time input. 
-
-This method processes the input and a one-dimensional array (**1-D array**) is generated, which represents a Sparse Distributed Representation (SDR). 
-
-The resulting SDR can be represented both as text and as a bitmap. 
-
-In bitmap representation, the SDR is converted into a **2-D array** (twoDimArray), and then the SDRs can be further visualized using tools like DrawBitmap(), which generates bitmap images from the SDRs.
-
-In our example, ```result2``` contains the 1-D array.
-This 1-D array is converted to a 2-D array by:
-
-```C#
-int[,] twoDimenArray2 = ArrayUtils.Make2DArray<int>(result2, (int)Math.Sqrt(result2.Length), (int)Math.Sqrt(result2.Length));
-```
-
-and then the transpose of the 2-D array (twoDimArray) is passed to the DrawBitmap method.
-
-```C#
-var twoDimArray2 = ArrayUtils.Transpose(twoDimenArray2);
-NeoCortexUtils.DrawBitmap(twoDimArray2, 1024, 1024, $"{prefix}_out_{input.ToString().Replace("/", "-").Replace(":", "-")}_32x32-N-{encoderSettings2["DayOfWeekEncoder"]["N"]}-W-{encoderSettings2["DayOfWeekEncoder"]["W"]}.png", Color.Yellow, Color.Black);
-```
-In ```twoDimenArray2```, **N=156**, so the size of 1-D array (result2) is 156, and the 2-D array is **(int)Math.Sqrt(156) = 12**, **(int)Math.Sqrt(156)=12**.
-
-In ```DrawBitmap```, Width and height given is: 1024,1024 respectively. Color for inactive cell is set to Yellow and for active cell is set to Black.
-
-The generated SDR for TestMethod8 with input “05/27/2017 21:58:07” is:
-
-```C#
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-```
-
-And the generated Bitmap is:
-
-<img src="https://user-images.githubusercontent.com/74201238/113520614-90162180-9594-11eb-83c1-3878aaa16e93.png" width="450"><br />
-
-For this example, The scale is calculated as
-
-**scale = width /w = 1024/156 = 6**
-
-So for each SDR bit (active cell) at index **[Xcount,Ycount]** in the two-dimensional array, the **color is set for a block of 6x6 pixels** in the 1024x1024-pixel bitmap.
-
 ### DrawBitmap sample for Scalar Encoder
-
-Scalar Encoder is a type of encoder is used to **encode numbers** into SDRs. 
 
 First, scalar encoders are initialized with predefined settings using their constructors. These settings are stored in a dictionary, specifying parameters such as **"W"** (width of each encoding), **"N"** (total number of bits in the encoding), **"MinVal"** (minimum value of the input), **"MaxVal"** (maximum value of the input), and others.
 
@@ -385,67 +200,88 @@ These results are then transposed and passed to the DrawBitmap method. In this m
 - We also see the value of i for which the Bit Map is generated in the top left corner of the Bit Map.
 
 ### The generated SDRs are as follows
-***For Range 0 - 49***
+|``For Range 0-49``|``For Range 50-149``|``For Range 150-249``|``For Range 250-349``|``For Range 350-449``|``For Range 450-500``|
+|----------|---------|-------|--------|--------|----------|
+| ![24,5](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d868d946-15e3-4405-b447-b39681c700a1) | ![99,5](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/a3a522ac-5f3c-4b8e-9d65-fc7a1bc74057)   |  ![199,5](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/7b91ab36-c42a-4792-8f9e-3d64a8abfa7e)  |   ![299,5](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/8035f1dc-db02-4b31-a193-309f56f9de14) |   ![399,5](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/74549c24-e178-4e61-91e4-7776a1ef9272) |  ![475](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/a1e8e00e-92ac-46c1-9399-3112923d1a13)  |       
 
-For input value 6: 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-
-For input value 20: 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-
-For input value 49: 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
-
-
-***For Range 50 - 149***
-
-For input value 50: 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-
-For input value 111: 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-
-For input value 149: 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
-
-
-***For Range 150 - 249***
-
-For input value 150: 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-
-For input value 213: 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-
-For input value 249: 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-
-
-***For Range 250 - 349***
-
-For input value 250: 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-
-For input value 327: 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-
-For input value 349: 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
-
-
-***For Range 350 - 449***
-
-For input value 350: 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-
-For input value 401: 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-
-For input value 449: 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-
-
-***For Range 450 - 500***
-
-For input value 450: 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-
-For input value 497: 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-
-
-## The generated bitmaps are as follows
-
-<img src="https://user-images.githubusercontent.com/74201238/114312695-de2aa800-9af3-11eb-926f-a0f7dbe20c41.png" width="450"><br />
 
 In this example, We have width = 1024 and w =20.
 
 ***scale = width / w***. So, scale =  1024 / 20 = 51
 
 For the SDR bit at index ***[Xcount, Ycount]*** in ***twoDimArray***, the colour is set for scale * scale (51 x 51 = 2601) pixels out of 1024 x 1024 pixels.
+
+
+
+
+
+
+
+
+
+## SDR Generation Using DateTime Encoder
+
+The DateTime Encoder is a component used to encode date and time information into SDRs.
+
+The DateTime Encoder is initialized with specific settings include parameters such as the width (W) and number of bits (N) for the encoder, minimum and maximum values, periodicity, and padding. Once initialized, the encoder's Encode() method is invoked with a specific date and time input.
+
+This method processes the input and a one-dimensional array (1-D array) is generated, which represents a Sparse Distributed Representation (SDR).
+
+The resulting SDR can be represented both as text and as a bitmap.
+
+In bitmap representation, the SDR is converted into a 2-D array (twoDimArray), and then the SDRs can be further visualized using tools like DrawBitmap(), which generates bitmap images from the SDRs.
+ 
+
+### DrawBitmap sample for DateTime Encoder
+The DateTime Encoder is a component used to **encode date and time information** into SDRs. 
+
+The DateTime Encoder is initialized with specific settings include parameters such as the **width (W)** and **number of bits (N)** for the encoder, **minimum and maximum values**, **periodicity**, and **padding**. Once initialized, the encoder's ```Encode()``` method is invoked with a specific date and time input. 
+
+This method processes the input and a one-dimensional array (**1-D array**) is generated, which represents a Sparse Distributed Representation (SDR). 
+
+The resulting SDR can be represented both as text and as a bitmap. 
+
+In bitmap representation, the SDR is converted into a **2-D array** (twoDimArray), and then the SDRs can be further visualized using tools like DrawBitmap(), which generates bitmap images from the SDRs.
+
+In our example, ```result2``` contains the 1-D array.
+This 1-D array is converted to a 2-D array by:
+
+```C#
+int[,] twoDimenArray2 = ArrayUtils.Make2DArray<int>(result2, (int)Math.Sqrt(result2.Length), (int)Math.Sqrt(result2.Length));
+```
+
+and then the transpose of the 2-D array (twoDimArray) is passed to the DrawBitmap method.
+
+```C#
+var twoDimArray2 = ArrayUtils.Transpose(twoDimenArray2);
+NeoCortexUtils.DrawBitmap(twoDimArray2, 1024, 1024, $"{prefix}_out_{input.ToString().Replace("/", "-").Replace(":", "-")}_32x32-N-{encoderSettings2["DayOfWeekEncoder"]["N"]}-W-{encoderSettings2["DayOfWeekEncoder"]["W"]}.png", Color.Yellow, Color.Black);
+```
+In ```twoDimenArray2```, **N=156**, so the size of 1-D array (result2) is 156, and the 2-D array is **(int)Math.Sqrt(156) = 12**, **(int)Math.Sqrt(156)=12**.
+
+In ```DrawBitmap```, Width and height given is: 1024,1024 respectively. Color for inactive cell is set to Yellow and for active cell is set to Black.
+
+The generated SDR for TestMethod8 with inputs is:
+
+|``input``| ``"05/07/2011 21:58:07"	`` |``"06/07/2012 21:58:07"	``|``"07/07/2013 21:58:07"``|``"08/07/2014 21:58:07"``|
+|----------|---------|-------|--------|--------|
+|Results|![DateTime_out_05-07-2011 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/84415515-4a61-4195-ae4f-ba82d1dc7484) |![DateTime_out_06-07-2012 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3dee3db4-e272-4eaf-b7c5-e020d91fe687)|![DateTime_out_07-07-2013 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/5c371a76-6701-44aa-a32c-4450f9719ee4)|![DateTime_out_08-07-2014 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d06edb69-1e89-4b42-9da9-be57c51407ea)|
+
+
+Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/DateTimeEncoderTests.cs)
+
+
+
+
+
+
+
+
+
+
+
+## SDR Generation Using Geo-Spatial Encoder
+
+The Geospatial Encoder facilitates the conversion of geospatial data into binary arrays and enables the visualization of this data as bitmap images. In the exploration of geospatial data through Sparse Distributed Representations (SDRs), we utilize the DrawBitmap method to translate encoded geographical coordinates into visually interpretable bitmap images. This approach allows for the visualization of spatial information encoded within SDRs, offering insights into the encoded geographical regions.
 
 
 ### DrawBitmap sample for Geospatial Encoder
@@ -497,64 +333,40 @@ public static void DrawBitmap(int[,] twoDimArray, int width, int height, String 
 ```
 
 ```C#
-NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
+NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Black, text: j.ToString());
 ```
 
 For the 2D array, w=15 and h=15.
 The w(15) and h(15) of array must be always lesser than the width(1024) and height(1024) of bitmap.
 
 If twoDimArray[Xcount, Ycount] == 1, then Pixel is set to active cell color else it is set to inactive cell color.
-
-
-The SDR’s generated with input ***48.4*** is
-
-```C#
-[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-```
-
-
 The bitmaps generated are as below.
-
-<img src="https://user-images.githubusercontent.com/74201238/114312848-68730c00-9af4-11eb-814b-f93abc095885.png" width="450"><br />
-
-***scale = width / w***.   width = 1024 and w =15.
-scale =  1024 / 15 = 68
-
-SDR bit at index ***[Xcount, Ycount]*** in ***twoDimArray***, the colour is set for scale * scale (68 x 68 = 4624) pixels out of 1024 x 1024 pixels.
+The following table visualizes the result from several ``input`` of the above unit test using ``NeoCortexUtils.DrawBitmap()``:
+|``input``| ``48`` |``49``|``50``|
+|----------|---------|-------|--------|
+|Results|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/1240a76e-7963-494e-a921-12d4f0c8150e)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/c3b31a7a-c7e4-42c7-b33f-6dd07b90e187)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/99d8d4da-f25f-4027-ab96-4fc7037fe22f)|
 
 
-## Change in size and color of Bitmap
+Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/GeoSpatialEncoderExperimentalTests.cs) 
 
-Modifing the parameters of the encoder and bitmap, leades to change in the resulting SDRs and their bitmap representations.
 
-- By modifing the following parameters as:
 
-  ```W= 21, N=40  MinVal=48.75  MaxVal=51.86```
 
-  The resulting 1-D array size is 40 and is converted to a 2-D array with dimensions 6×6 (w and h of 2D array is 6.).
 
-- Now, The **height and the width** of the bitmap are both set to **1024 pixels**.
 
-   **Scale = width / w** = 1024/6 = 170
-   
-  Therefore, each cell in the 2-D array corresponds to 170 pixels in the bitmap.
 
-- The color of the bitmap is changed to **Red for inactive cells** and **green for active cells**.
 
-```C#
-NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
-```
 
-The SDR’s generated for input 51.85 is
-```C#
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-```
 
-The bitmaps generated in this case are:
 
-<img src="https://user-images.githubusercontent.com/74201238/114312899-a2441280-9af4-11eb-8a29-c3379d280fe0.png" width="450"><br />
 
-The bitmaps are generated for the same values 48, 49 and 50 when W and N are changed from 103 to 21 and 238 to 41 respectively.
+
+
+
+
+
+
+
 
 ## Bitmap representation of Image using Spatial Pooler
 
@@ -602,6 +414,75 @@ NeoCortexUtils.DrawBitmaps(arrays, outputImage, Color.Yellow, Color.Gray, OutImg
 ```
 
 The DrawBitmaps function of the NeoCortexUtils helps to build the SDR represention. It takes 6 parameters to process the final bitmap.
+|``Input Image``|``Binary Image``| ``SDR``|
+|--------|-------|-------|
+|![input](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/1dfe1a2d-1869-45ff-affc-894dad9afd03)|![binary](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3f422ab8-b697-4669-bfd3-66eff03384ec)|![SDR](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de)|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Change in size and color of Bitmap
+
+Modifing the parameters of the encoder and bitmap, leades to change in the resulting SDRs and their bitmap representations.
+
+- By modifing the following parameters as:
+
+  ```W= 21, N=40  MinVal=48.75  MaxVal=51.86```
+
+  The resulting 1-D array size is 40 and is converted to a 2-D array with dimensions 6×6 (w and h of 2D array is 6.).
+
+- Now, The **height and the width** of the bitmap are both set to **1024 pixels**.
+
+   **Scale = width / w** = 1024/6 = 170
+   
+  Therefore, each cell in the 2-D array corresponds to 170 pixels in the bitmap.
+
+- The color of the bitmap is changed to **Red for inactive cells** and **green for active cells**.
+
+```C#
+NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
+```
+
+The SDR’s generated for input 51.85 is
+```C#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+```
+
+The bitmaps generated in this case are:
+|``Input Image``|``Binary Image``| ``SDR``|
+|--------|-------|-------|
+|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/830ff6b8-0a84-4517-aea4-900f7eb1cf65)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/822bd41c-5987-45a1-a782-43bdcfb04ad7)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/941cbdcd-e10b-429c-af22-af13c747e6e7)|
+
+
+The bitmaps are generated for the same values 48, 49 and 50 when W and N are changed from 103 to 21 and 238 to 41 respectively.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Parameter Info
 -   **arrays:**  The 2D array which contains the SDRs.
