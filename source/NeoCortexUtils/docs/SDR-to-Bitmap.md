@@ -147,6 +147,46 @@ In this document, ```Encode()``` method processes the input and a one-dimensiona
 int[,] twoDimenArray2 = ArrayUtils.Make2DArray<int>(result2, (int)Math.Sqrt(result2.Length), (int)Math.Sqrt(result2.Length));
 ```
 
+## Changes In The Size And Color of Bitmap
+
+Modifing the parameters of the encoder and bitmap, leades to change in the resulting SDRs and their bitmap representations.
+
+- By modifing the following parameters as:
+
+  ```W= 21, N=40  MinVal=48.75  MaxVal=51.86```
+
+  The resulting 1-D array size is 40 and is converted to a 2-D array with dimensions 6×6 (w and h of 2D array is 6.).
+
+- Now, The **height and the width** of the bitmap are both set to **1024 pixels**.
+
+   **Scale = width / w** = 1024/6 = 170
+   
+  Therefore, each cell in the 2-D array corresponds to 170 pixels in the bitmap.
+
+- The color of the bitmap is changed to **Red for inactive cells** and **green for active cells**.
+
+```C#
+NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
+```
+
+The SDR’s generated for input 51.85 is
+```C#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+```
+
+The bitmaps generated in this case are:
+|``Input Image``|``Binary Image``| ``SDR``|
+|--------|-------|-------|
+|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/830ff6b8-0a84-4517-aea4-900f7eb1cf65)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/822bd41c-5987-45a1-a782-43bdcfb04ad7)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/941cbdcd-e10b-429c-af22-af13c747e6e7)|
+
+
+
+
+
+
+
+
+
 
 
 
@@ -435,40 +475,6 @@ The DrawBitmaps function of the NeoCortexUtils helps to build the SDR representi
 
 
 
-## Change in size and color of Bitmap
-
-Modifing the parameters of the encoder and bitmap, leades to change in the resulting SDRs and their bitmap representations.
-
-- By modifing the following parameters as:
-
-  ```W= 21, N=40  MinVal=48.75  MaxVal=51.86```
-
-  The resulting 1-D array size is 40 and is converted to a 2-D array with dimensions 6×6 (w and h of 2D array is 6.).
-
-- Now, The **height and the width** of the bitmap are both set to **1024 pixels**.
-
-   **Scale = width / w** = 1024/6 = 170
-   
-  Therefore, each cell in the 2-D array corresponds to 170 pixels in the bitmap.
-
-- The color of the bitmap is changed to **Red for inactive cells** and **green for active cells**.
-
-```C#
-NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
-```
-
-The SDR’s generated for input 51.85 is
-```C#
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-```
-
-The bitmaps generated in this case are:
-|``Input Image``|``Binary Image``| ``SDR``|
-|--------|-------|-------|
-|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/830ff6b8-0a84-4517-aea4-900f7eb1cf65)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/822bd41c-5987-45a1-a782-43bdcfb04ad7)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/941cbdcd-e10b-429c-af22-af13c747e6e7)|
-
-
-The bitmaps are generated for the same values 48, 49 and 50 when W and N are changed from 103 to 21 and 238 to 41 respectively.
 
 
 
@@ -484,16 +490,8 @@ The bitmaps are generated for the same values 48, 49 and 50 when W and N are cha
 
 
 
-## Parameter Info
--   **arrays:**  The 2D array which contains the SDRs.
--	**outputImage:** The filepath where the output bitmap is to be stored.
--	**Color.Yellow:** Color of the inactive bit
--	**Color:Grey:**  Color of the active bit
--	**OutImgSize:** The width of the output Bitmap
--	**OutImgSize:** The height of the output Bitmap
 
-The pixel values in the output bitmap are set to the respective color according to the active and inactive bits. Depending on the desired size of Bitmap to be presented,
-the width and height can be chosen.
+
 
 ### Example representing an Alphabet L in Bitmap after computing in spatial pooler
 2-D array with dimension 64x64 containing the SDRs, generated from spatial pooler has to be represented in Bitmap. The dimensions of the bitmap are chosen to be 1024x1024.
