@@ -1,8 +1,8 @@
 # Bitmap Representation of SDRs
 
-Sparse Distributed Representations (SDRs) are a fundamental concept in various fields, including machine learning, neuroscience, and data encoding. At their core, SDRs are binary vectors where only a small fraction of the elements are active (set to 1), while the majority remain inactive (set to 0). This sparse nature enables efficient representation and processing of complex data.
+**Sparse Distributed Representations** (SDRs) are a fundamental concept in various fields, including machine learning, neuroscience, and data encoding. At their core, SDRs are binary vectors where only a small fraction of the elements are **active (set to 1)**, while the majority remain **inactive (set to 0)**. This sparse nature enables efficient representation and processing of complex data.
 
-This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, CategoryEncoder and represent them into bitmaps.
+This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
 
 The Bitmap Representation of SDRs is to provide a visual representation of the generated SDRs. This visualization helps in analyzing the encoded information, debugging the models, and communicating the results effectively.
 
@@ -43,17 +43,20 @@ Encoders need to be first initialized with pre-defined settings using its constr
 
 The following section demonstrate how to use an encoder.
 
-To initialize an encoder, use the code snippet with method GetDefaultEncoderSettings()
-
+To initialize an encoder, use the code snippet with method ```GetDefaultEncoderSettings()```
+```C#
 ScalarEncoder encoder = new ScalarEncoder(GetDefautEncoderSettings());
+```
 is equivalent to writing the following
-
+```C#
 ScalarEncoder encoder = new ScalarEncoder();
 encoder.Initialize(GetDefautEncoderSettings());
-After loading encoder settings into the encoder, method encoder.Encode() is invoked to start the encoding process and return an array of '0's and '1's.
-
+```
+After loading encoder settings into the encoder, method ```encoder.Encode()``` is invoked to start the encoding process and return an array of '0's and '1's.
+```C#
 double input = 99.50;
 int[] result = encoder.Encode(input);
+```
 #### The default encoder settings is summarized as follow:
 
 | Parameter	   | Data type | Definition |
@@ -166,13 +169,13 @@ First, scalar encoders are initialized with predefined settings using their cons
 
 Once the encoder is initialized, the ```Encode()``` method is invoked with the input values to start the encoding process. This method returns binary arrays representing the encoded values.
 
-To generate Bit Maps in Scalar Encoder the printBitMap function is called in the Test Method. Here we take ***TestMethod9*** in our Unit Test into account.
+To generate Bit Maps in Scalar Encoder the printBitMap function is called in the Test Method. Here we take **TestMethod9** in our Unit Test into account.
 In case of Scalar Encoder numbers are encoded.
-In ***TestMethod9*** we are encoding the Air Quality Index (AQI) to which humans are exposed to. The value of Air Quality Index varies from 0 to 500.
+In **TestMethod9** we are encoding the Air Quality Index (AQI) to which humans are exposed to. The value of Air Quality Index varies from 0 to 500.
 The data that we have used is that the quality of air that humans are exposed to 0-49 is Good; 50-149 is Moderate; 150-249 is Unhealthy for sensitive groups;
 250-349 is Unhealthy; 350-449 is Very Unhealthy; 450-500 is Hazardous.
 
-The function ***printBitMap*** is called in ***TestMethod9***. Once executed, ***printBitMap*** encodes the input and coverts it to a 1-D Array.
+The function **printBitMap** is called in **TestMethod9**. Once executed, **printBitMap** encodes the input and coverts it to a 1-D Array.
 This output is equal to the SDR . This 1-D Array is stored in result1.
 This 1-D Array is then converted to a 2-D array using
 
@@ -186,7 +189,7 @@ This resulting 2-D array is then transposed using
 var twoDimArray = ArrayUtils.Transpose(twoDimenArray);
 ```
 
-This transposed array is then passed to the ***DrawBitmap*** method
+This transposed array is then passed to the **DrawBitmap** method
 
 ```C#
 NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, Path.Combine(folderName, filename), Color.Yellow, Color.DarkOrange, text: i.ToString());
@@ -194,8 +197,8 @@ NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, Path.Combine(folderName, file
 
 In this example, the value of N is set 20 while initializing the encoding parameters for the encoder. So, the size of SDR which is saved in result1 is 20.
 
-As this value is then converted to 2-D Array, hence 20 is paased to the ***(int) Math.Sqrt(result1.Length)*** and ***(int) Math.Sqrt(result1.Length)***
-This becomes  ***(int) Math.Sqrt(20) = 4*** and ***(int) Math.Sqrt(20) = 4***
+As this value is then converted to 2-D Array, hence 20 is paased to the **(int) Math.Sqrt(result1.Length)** and **(int) Math.Sqrt(result1.Length)**
+This becomes  **(int) Math.Sqrt(20) = 4** and **(int) Math.Sqrt(20) = 4**
 
 These results are then transposed and passed to the DrawBitmap method. In this method  In this method
 - Height and Width of the Bit Map is set to 1024.
@@ -211,9 +214,9 @@ These results are then transposed and passed to the DrawBitmap method. In this m
 
 In this example, We have width = 1024 and w =20.
 
-***scale = width / w***. So, scale =  1024 / 20 = 51
+**scale = width / w**. So, scale =  1024 / 20 = 51
 
-For the SDR bit at index ***[Xcount, Ycount]*** in ***twoDimArray***, the colour is set for scale * scale (51 x 51 = 2601) pixels out of 1024 x 1024 pixels.
+For the SDR bit at index **[Xcount, Ycount]** in **twoDimArray**, the colour is set for scale * scale (51 x 51 = 2601) pixels out of 1024 x 1024 pixels.
 
 
 
@@ -292,7 +295,7 @@ The Geospatial Encoder facilitates the conversion of geospatial data into binary
 
 The Geospatial Encoder facilitates the conversion of geospatial data into binary arrays and enables the visualization of this data as bitmap images.
 
- ***TestMethod5***
+ **TestMethod5**
  To generate SDRs and and create bitmap, the values of W, N, MinVal and MaxVal are set as below. These settings define how the geospatial data will be encoded into binary arrays.
 
                 ```encoderSettings.Add("W", 103);
@@ -300,7 +303,7 @@ The Geospatial Encoder facilitates the conversion of geospatial data into binary
                    encoderSettings.Add("MinVal", (double)48.75);
                    encoderSettings.Add("MaxVal", (double)51.86);```
 
-For bitmaps in the ***printImage*** method
+For bitmaps in the **printImage** method
 
 ```C#
 for (double j = (long)encoder.MinVal; j < (long)encoder.MaxVal; j +=1)
@@ -313,21 +316,21 @@ initialises j with minimum value 48 and iterates the loop for bitmap until j les
 var result2 = encoder.Encode(j);
 ```
 
-***result2*** generates 1-D array of size 238.
+**result2** generates 1-D array of size 238.
 
 ```C#
 int[,] twoDimenArray = ArrayUtils.Make2DArray<int>(result2,  (int)Math.Sqrt(result2.Length), (int)Math.Sqrt(result2.Length));
 ```
 
-***twoDimenArray*** generates 2-D array with the size 15*15 since Square root of 238 =15.
+**twoDimenArray** generates 2-D array with the size 15*15 since Square root of 238 =15.
 
 ```C#
 var twoDimArray = ArrayUtils.Transpose(twoDimenArray);
 ```
 
-***twoDimArray*** transpose of twoDimenArray (rows becomes the columns)
+**twoDimArray** transpose of twoDimenArray (rows becomes the columns)
 
-This ***twoDimArray*** is then passed to ```Drawbitmap``` method.
+This **twoDimArray** is then passed to ```Drawbitmap``` method.
 Bitmap of Height and the width 1024
 Inactive cell are represted by red color and active cells black color.
 
@@ -340,11 +343,13 @@ public static void DrawBitmap(int[,] twoDimArray, int width, int height, String 
 NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Black, text: j.ToString());
 ```
 
-For the 2D array, w=15 and h=15.
+For the 2D array, **w=15** and **h=15**.
+
 The w(15) and h(15) of array must be always lesser than the width(1024) and height(1024) of bitmap.
 
-If twoDimArray[Xcount, Ycount] == 1, then Pixel is set to active cell color else it is set to inactive cell color.
+If twoDimArray[Xcount, Ycount] == 1, then Pixel is set to **active cell color Black** else it is set to **inactive cell color Red**.
 The bitmaps generated are as below.
+
 The following table visualizes the result from several ``input`` of the above unit test using ``NeoCortexUtils.DrawBitmap()``:
 |``input``| ``48`` |``49``|``50``|
 |----------|---------|-------|--------|
@@ -384,25 +389,6 @@ The bitmaps generated in this case are:
 |``Input Image``|``Binary Image``| ``SDR``|
 |--------|-------|-------|
 |![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/830ff6b8-0a84-4517-aea4-900f7eb1cf65)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/822bd41c-5987-45a1-a782-43bdcfb04ad7)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/941cbdcd-e10b-429c-af22-af13c747e6e7)|
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Bitmap representation of Image using Spatial Pooler
@@ -460,32 +446,6 @@ Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_T
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Example representing an Alphabet L in Bitmap after computing in spatial pooler
 2-D array with dimension 64x64 containing the SDRs, generated from spatial pooler has to be represented in Bitmap. The dimensions of the bitmap are chosen to be 1024x1024.
 Since the 2-D array is of a smaller dimension to that of Bitmap, a scale is considered here so that the bitmap with dimension 1024x1024 can be fully utilized to represent
@@ -503,7 +463,8 @@ The count for the 2D arrays is 2 here because it represents 2 Bitmaps- one for a
 
 <img src="https://user-images.githubusercontent.com/74201563/113511808-0baaab00-9562-11eb-81ea-3ccc35eaa34d.png" width="450"><br />
 
-With scale set to 7, for each position of 64x64 2D array is set to 49 pixel positions in the 1024x1024 bitmap.
+With scale set to 7, for each position of 64x64 2-D array is set to 49 pixel positions in the 1024x1024 bitmap.
+
 For example, if the scale varies to 15 with the following changes in the variable values to *var scale = (1024 / 1) / (64+1)* then each position in 64x64 2D array is represented
 by 225 pixel positions of 1024x1024 bitmap as below.
 
@@ -522,8 +483,9 @@ else
         k++;
     }
 ```
-For each active bit in 64x64 2D array and with the scale of 7, 49 pixel positions in 1024x1024 are set to color Grey and the rest inactive bits to yellow.
-The dimensions of the bitmap to be represented can be changed by providing the values for width and height in DrawBitMap() function.
+For each active bit in 64x64 2D array and with the scale of 7, 49 pixel positions in 1024x1024 are set to color **Grey** and the rest inactive bits to **yellow**.
+
+The dimensions of the bitmap to be represented can be changed by providing the values for width and height in ```DrawBitMap()``` function.
 
 ### Example representing Overlap(Intersection),Difference and Union for Alphabet L and V in Bitmap after computing in spatial pooler
 General Bitmap representation of L and V:
@@ -534,7 +496,7 @@ Below are the represenatation for Overlap, Difference and Union:
 
 <img src="https://user-images.githubusercontent.com/74201563/114621659-42dd3280-9cad-11eb-8ff3-be63f8b7f4d2.png" width="450"><br />
 
-Two SDRs are compared with the help of ***UnionSDRFun(), DiffSDRFun()*** and ***OverlapSDRFun()*** functions.
+Two SDRs are compared with the help of **UnionSDRFun(), DiffSDRFun()** and **OverlapSDRFun()** functions.
 The overlap.png shows very few intersections as the SDRs are very different from each other. Basically, the combination of Overlap and Difference gives us Union.
 
 ### Example representing Overlap(Intersection),Difference and Union for Alphabet L and small l in Bitmap after computing in spatial pooler
