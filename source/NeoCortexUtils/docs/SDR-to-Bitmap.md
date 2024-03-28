@@ -353,6 +353,39 @@ The following table visualizes the result from several ``input`` of the above un
 
 Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/GeoSpatialEncoderExperimentalTests.cs) 
 
+## Changes In The Size And Color of Bitmap
+
+Modifing the parameters of the encoder and bitmap, leades to change in the resulting SDRs and their bitmap representations.
+
+- By modifing the following parameters as:
+
+  ```W= 21, N=40  MinVal=48.75  MaxVal=51.86```
+
+  The resulting 1-D array size is 40 and is converted to a 2-D array with dimensions 6×6 (w and h of 2D array is 6.).
+
+- Now, The **height and the width** of the bitmap are both set to **1024 pixels**.
+
+   **Scale = width / w** = 1024/6 = 170
+   
+  Therefore, each cell in the 2-D array corresponds to 170 pixels in the bitmap.
+
+- The color of the bitmap is changed to **Red for inactive cells** and **green for active cells**.
+
+```C#
+NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
+```
+
+The SDR’s generated for input 51.85 is
+```C#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+```
+
+The bitmaps generated in this case are:
+|``Input Image``|``Binary Image``| ``SDR``|
+|--------|-------|-------|
+|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/830ff6b8-0a84-4517-aea4-900f7eb1cf65)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/822bd41c-5987-45a1-a782-43bdcfb04ad7)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/941cbdcd-e10b-429c-af22-af13c747e6e7)|
+
+
 
 
 
@@ -519,38 +552,5 @@ On comaprison between two SDRs, the overlap.png shows more  overlaps/intersectio
 
 
 
-
-
-## Changes In The Size And Color of Bitmap
-
-Modifing the parameters of the encoder and bitmap, leades to change in the resulting SDRs and their bitmap representations.
-
-- By modifing the following parameters as:
-
-  ```W= 21, N=40  MinVal=48.75  MaxVal=51.86```
-
-  The resulting 1-D array size is 40 and is converted to a 2-D array with dimensions 6×6 (w and h of 2D array is 6.).
-
-- Now, The **height and the width** of the bitmap are both set to **1024 pixels**.
-
-   **Scale = width / w** = 1024/6 = 170
-   
-  Therefore, each cell in the 2-D array corresponds to 170 pixels in the bitmap.
-
-- The color of the bitmap is changed to **Red for inactive cells** and **green for active cells**.
-
-```C#
-NeoCortexUtils.DrawBitmap(twoDimArray, 1024, 1024, $"{folderName}\\{j}.png", Color.Red, Color.Green, text: j.ToString());
-```
-
-The SDR’s generated for input 51.85 is
-```C#
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-```
-
-The bitmaps generated in this case are:
-|``Input Image``|``Binary Image``| ``SDR``|
-|--------|-------|-------|
-|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/830ff6b8-0a84-4517-aea4-900f7eb1cf65)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/822bd41c-5987-45a1-a782-43bdcfb04ad7)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/941cbdcd-e10b-429c-af22-af13c747e6e7)|
 
 
