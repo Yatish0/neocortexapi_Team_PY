@@ -459,6 +459,8 @@ The DrawBitmaps function of the NeoCortexUtils helps to build the SDR representi
 |![input](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/1dfe1a2d-1869-45ff-affc-894dad9afd03)|![binary](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3f422ab8-b697-4669-bfd3-66eff03384ec)|![SDR](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de)|
 
 
+Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/SdrRepresentation/SpatialPoolerColumnActivityTest.cs)
+
 
 
 
