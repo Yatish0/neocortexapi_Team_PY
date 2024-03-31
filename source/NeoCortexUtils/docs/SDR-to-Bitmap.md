@@ -217,7 +217,7 @@ In this example, We have width = 1024 and w =20.
 **scale = width / w**. So, scale =  1024 / 20 = 51
 
 For the SDR bit at index **[Xcount, Ycount]** in **twoDimArray**, the colour is set for scale * scale (51 x 51 = 2601) pixels out of 1024 x 1024 pixels.
-
+More example can be found [here](https://github.com/ddobric/neocortexapi/blob/ac26d4acecea21d74b6648cf23c6360a244d1f9d/source/NeoCortexApi/Encoders/ScalarEncoder.cs#L18) 
 
 
 
@@ -274,7 +274,7 @@ The generated SDR for TestMethod8 with inputs is:
 |Results|![DateTime_out_05-07-2011 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/84415515-4a61-4195-ae4f-ba82d1dc7484) |![DateTime_out_06-07-2012 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3dee3db4-e272-4eaf-b7c5-e020d91fe687)|![DateTime_out_07-07-2013 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/5c371a76-6701-44aa-a32c-4450f9719ee4)|![DateTime_out_08-07-2014 21-58-07_32x32-N-1024-W-21](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/d06edb69-1e89-4b42-9da9-be57c51407ea)|
 
 
-Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/DateTimeEncoderTests.cs)
+Further unit tests can be found [here](https://github.com/ddobric/neocortexapi/blob/ac26d4acecea21d74b6648cf23c6360a244d1f9d/source/UnitTestsProject/EncoderTests/DateTimeEncoderTests.cs#L21)
 
 
 
@@ -356,7 +356,7 @@ The following table visualizes the result from several ``input`` of the above un
 |Results|![48](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/1240a76e-7963-494e-a921-12d4f0c8150e)|![49](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/c3b31a7a-c7e4-42c7-b33f-6dd07b90e187)|![50](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/99d8d4da-f25f-4027-ab96-4fc7037fe22f)|
 
 
-Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/EncoderTests/GeoSpatialEncoderExperimentalTests.cs) 
+Further unit tests can be found [here](https://github.com/ddobric/neocortexapi/blob/ac26d4acecea21d74b6648cf23c6360a244d1f9d/source/UnitTestsProject/EncoderTests/GeoSpatialEncoderExperimentalTests.cs#L34) 
 
 ## Changes In The Size And Color of Bitmap
 
@@ -442,7 +442,7 @@ The DrawBitmaps function of the NeoCortexUtils helps to build the SDR representi
 |![input](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/1dfe1a2d-1869-45ff-affc-894dad9afd03)|![binary](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/3f422ab8-b697-4669-bfd3-66eff03384ec)|![SDR](https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de)|
 
 
-Further unit tests can be found [here](https://github.com/Yatish0/neocortexapi_Team_PY/blob/master/source/UnitTestsProject/SdrRepresentation/SpatialPoolerColumnActivityTest.cs)
+Further unit tests can be found [here](https://github.com/ddobric/neocortexapi/blob/ac26d4acecea21d74b6648cf23c6360a244d1f9d/source/UnitTestsProject/SdrRepresentation/ScalarEncoderTestOverBitmap.cs#L16)
 
 
 
