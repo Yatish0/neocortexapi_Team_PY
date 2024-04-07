@@ -228,15 +228,8 @@ More example can be found [here](https://github.com/ddobric/neocortexapi/blob/ac
 
 ## SDR Generation Using DateTime Encoder
 
-The DateTime Encoder is a component used to encode date and time information into SDRs.
-
-The DateTime Encoder is initialized with specific settings include parameters such as the width (W) and number of bits (N) for the encoder, minimum and maximum values, periodicity, and padding. Once initialized, the encoder's Encode() method is invoked with a specific date and time input.
-
-This method processes the input and a one-dimensional array (1-D array) is generated, which represents a Sparse Distributed Representation (SDR).
-
-The resulting SDR can be represented both as text and as a bitmap.
-
-In bitmap representation, the SDR is converted into a 2-D array (twoDimArray), and then the SDRs can be further visualized using tools like DrawBitmap(), which generates bitmap images from the SDRs.
+The DateTime Encoder serves as a crucial component for encoding date and time information into Sparse Distributed Representations (SDRs). Initialized with 
+specific settings such as width (W), number of bits (N), minimum and maximum values, periodicity, and padding, this encoder efficiently processes date and time inputs through its Encode() method.
  
 
 ### DrawBitmap sample for DateTime Encoder
