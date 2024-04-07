@@ -258,7 +258,7 @@ NeoCortexUtils.DrawBitmap(twoDimArray2, 1024, 1024, $"{prefix}_out_{input.ToStri
 ```
 In ```twoDimenArray2```, **N=156**, so the size of 1-D array (result2) is 156, and the 2-D array is **(int)Math.Sqrt(156) = 12**, **(int)Math.Sqrt(156)=12**.
 
-In ```DrawBitmap```, Width and height given is: 1024,1024 respectively. Color for inactive cell is set to Yellow and for active cell is set to Black.
+In ```DrawBitmap```, Width and height given is: 1024,1024 respectively. Color for inactive cell is set to Black and for active cell is set to Green.
 
 The generated SDR for TestMethod8 with inputs is:
 
