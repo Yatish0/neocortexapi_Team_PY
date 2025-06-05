@@ -4,7 +4,17 @@
 
 **Sparse Distributed Representations** (SDRs) are a fundamental concept in various fields, including machine learning, Artificial Intelligence, Hierarchical Temporal Memory (HTM), neuroscience, and data encoding. SDRs are biologically inspired by how the brain is thought to represent information, particularly in the neocortex. At their core, SDR is a method of encoding information using large binary vector where only a small fraction of the elements are **active (set to 1)**, while the majority remain **inactive (set to 0)**, designed in a way that is both efficient and robust. This sparse nature enables efficient representation and processing of complex data.
 
-What makes SDRs unique is their sparsity: only a small percentage of the elements (or bits) in the vector are active or set to 1 (e.g., 2-3% active bits), while the vast majority remain inactive or set to 0. For example, in an SDR with 1,000 bits, only 20 or 30 might be set to 1. This structure allows SDRs to capture meaningful patterns in data while using very little memory and offering strong resistance to noise and error.
+What makes SDRs unique is their sparsity: only a small percentage of the elements (or bits) in the vector are active or set to 1 (e.g., 2-3% active bits), while the vast majority remain inactive or set to 0. 
+
+For example, in an SDR with 1,000 bits, only 20 or 30 might be set to 1. This structure allows SDRs to capture meaningful patterns in data while using very little memory and offering strong resistance to noise and error.
+
+Imagine a 1000-bit vector:
+~~~
+[0, 0, 0, ..., 0, 1, 0, 0, 1, 0, ..., 0, 1, ..., 0]
+~~~
+Let’s say 2% of the bits are 1 (i.e., 20 bits out of 1000 are active). These active positions carry the encoded information.
+
+
 
 This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
 
