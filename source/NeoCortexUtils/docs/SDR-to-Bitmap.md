@@ -14,6 +14,13 @@ Imagine a 1000-bit vector:
 ~~~
 Let’s say 2% of the bits are 1 (i.e., 20 bits out of 1000 are active). These active positions carry the encoded information.
 
+Key benefits of SDRs include:
+
+**Efficiency:** They require relatively low computational resources.
+
+**Noise tolerance:** Small errors or changes in the data usually do not affect the interpretation.
+
+**Semantic similarity:** SDRs can be compared in a way that reflects the similarity of the underlying data, making them useful for pattern recognition and classification tasks.
 
 
 This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
