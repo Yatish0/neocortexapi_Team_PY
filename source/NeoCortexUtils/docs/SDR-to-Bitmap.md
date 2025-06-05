@@ -22,6 +22,20 @@ Key benefits of SDRs include:
 
 **Semantic similarity:** SDRs can be compared in a way that reflects the similarity of the underlying data, making them useful for pattern recognition and classification tasks.
 
+## SDR to Bitmap Visualization
+
+While SDRs are powerful, they can be hard to interpret in raw binary form. That's why bitmap visualization is used:
+
+- Bitmaps turn binary SDRs into images where active bits are shown in one color (e.g., grey) and inactive bits in another (e.g., yellow).
+
+- This visual representation allows developers and researchers to:
+
+   - Quickly analyze encoded patterns
+
+   - Debug encoding and learning mechanisms
+
+   - Clearly present results to others, including non-technical audiences
+
 
 This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
 
