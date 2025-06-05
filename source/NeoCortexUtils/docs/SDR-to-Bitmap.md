@@ -36,6 +36,9 @@ While SDRs are powerful, they can be hard to interpret in raw binary form. That'
 
    - Clearly present results to others, including non-technical audiences
 
+Bitmap Visualization Example:
+
+<img src="https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de" width="450"><br />
 
 This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
 
