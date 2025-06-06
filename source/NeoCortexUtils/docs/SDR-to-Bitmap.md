@@ -1,5 +1,9 @@
 # Bitmap Representation of SDRs
 
+This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
+
+The Bitmap Representation of SDRs is to provide a visual representation of the generated SDRs. This visualization helps in analyzing the encoded information, debugging the models, and communicating the results effectively.
+
 ## Sparse Distributed Representations (SDRs)
 
 **Sparse Distributed Representations** (SDRs) are a fundamental concept in various fields, including machine learning, Artificial Intelligence, Hierarchical Temporal Memory (HTM), neuroscience, and data encoding. SDRs are biologically inspired by how the brain is thought to represent information, particularly in the neocortex. At their core, SDR is a method of encoding information using large binary vector where only a small fraction of the elements are **active (set to 1)**, while the majority remain **inactive (set to 0)**, designed in a way that is both efficient and robust. This sparse nature enables efficient representation and processing of complex data.
@@ -39,10 +43,6 @@ While SDRs are powerful, they can be hard to interpret in raw binary form. That'
 Bitmap Visualization Example:
 
 <img src="https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de" width="450"><br />
-
-This document explains how to generate SDR using ScalarEncoder, DateTimeEncoder, GeoSpatialEncoder, Spatial Pooler and represent them into bitmaps.
-
-The Bitmap Representation of SDRs is to provide a visual representation of the generated SDRs. This visualization helps in analyzing the encoded information, debugging the models, and communicating the results effectively.
 
 
 
