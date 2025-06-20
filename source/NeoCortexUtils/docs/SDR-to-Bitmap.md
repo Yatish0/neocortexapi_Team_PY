@@ -26,6 +26,12 @@ Key benefits of SDRs include:
 
 **Semantic similarity:** SDRs can be compared in a way that reflects the similarity of the underlying data, making them useful for pattern recognition and classification tasks.
 
+It is sometimes important to visualise the SDRs in different forms and make comparsions between them for a better understnding of the learning process. We are going to show you how to output SDRs as: 
+
+  - Indices
+  - Bitmaps
+  - Heatmaps
+
 ## SDR to Bitmap Visualization
 
 While SDRs are powerful, they can be hard to interpret in raw binary form. That's why bitmap visualization is used:
