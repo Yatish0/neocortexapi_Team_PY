@@ -32,6 +32,14 @@ It is sometimes important to visualise the SDRs in different forms and make comp
   - Bitmaps
   - Heatmaps
 
+Other than the representations, we will show you comparisons of different inputs by using overlap and instersection functions to see how different sdrs are similar or distinct semantically.
+
+The functions which are used for the SDR representation are listed: 
+
+- `NeoCortexApi.Helpers.StringifyVector`
+- `NeoCortexUtils.DrawBitmap()`
+- `DrawHeatmaps`
+
 ## SDR to Bitmap Visualization
 
 While SDRs are powerful, they can be hard to interpret in raw binary form. That's why bitmap visualization is used:
