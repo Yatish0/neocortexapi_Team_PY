@@ -6,25 +6,30 @@ The Bitmap Representation of SDRs is to provide a visual representation of the g
 
 ## Sparse Distributed Representations (SDRs)
 
-**Sparse Distributed Representations** (SDRs) are a fundamental concept in various fields, including machine learning, Artificial Intelligence, Hierarchical Temporal Memory (HTM), neuroscience, and data encoding. SDRs are biologically inspired by how the brain is thought to represent information, particularly in the neocortex. At their core, SDR is a method of encoding information using large binary vector where only a small fraction of the elements are **active (set to 1)**, while the majority remain **inactive (set to 0)**, designed in a way that is both efficient and robust. This sparse nature enables efficient representation and processing of complex data.
+**Sparse Distributed Representations** (SDRs) are inspired by how the neocortex in the human brain processes information. In biological neural networks, only a small percentage of neurons are active at any given time, yet the pattern of activation across the neural population can represent complex concepts. This sparsity ensures efficiency, noise tolerance, and distinctiveness of signals. Neuroscientific studies suggest that distributed and sparse activity in pyramidal neurons in cortical columns enables high-capacity memory and robust pattern recognition. SDRs mirror this mechanism by encoding data in large binary vectors with sparse, semantically meaningful activations—modeling how the brain efficiently handles perception and prediction.
 
-What makes SDRs unique is their sparsity: only a small percentage of the elements (or bits) in the vector are active or set to 1 (e.g., 2-3% active bits), while the vast majority remain inactive or set to 0. 
+A Sparse Distributed Representation (SDR) is a high-dimensional binary vector (a list of 0s and 1s) where only a small fraction of bits are active (1s) at any time and those active bits are spread across the representation. Each active bit carries semantic meaning. This specific pattern of activation encodes the data. 
 
-For example, in an SDR with 1,000 bits, only 20 or 30 might be set to 1. This structure allows SDRs to capture meaningful patterns in data while using very little memory and offering strong resistance to noise and error.
-
-Imagine a 1000-bit vector:
+For example, in an SDR with 1,000 bits, only 20 or 30 might be set to 1. These active positions carry the encoded information, enables efficient representation and processing of complex data.
 ~~~
 [0, 0, 0, ..., 0, 1, 0, 0, 1, 0, ..., 0, 1, ..., 0]
 ~~~
-Let’s say 2% of the bits are 1 (i.e., 20 bits out of 1000 are active). These active positions carry the encoded information.
+This structure allows SDRs to capture meaningful patterns in data while using very little memory and offering strong resistance to noise and error.
 
-Key benefits of SDRs include:
+**Mathematical Foundations & Properties**
 
-**Efficiency:** They require relatively low computational resources.
+- **Overlap = Meaning:** Two SDRs that share active bits are semantically similar—the more overlap, the more conceptually related.
+- **Noise Tolerance:** Even if some bits flip, similarity can still be recognized due to partial overlap.
+- **High Capacity:** With thousands of bits and sparse activation, combinatorial space is enormous.
+- **Union Capability:** SDRs can form unions via OR operations and still identify components reliably
 
-**Noise tolerance:** Small errors or changes in the data usually do not affect the interpretation.
+**Key benefits** of SDRs include:
 
-**Semantic similarity:** SDRs can be compared in a way that reflects the similarity of the underlying data, making them useful for pattern recognition and classification tasks.
+**Efficiency:** They represent vast concept spaces with minimal active neurons, suitable for sparse neural/high-dimensional tasks.
+
+**Robustness:**  With stand-in bits, SDRs gracefully handle noise and partial failure.
+
+**Interpretability:** Shared active bits directly translate to shared semantics—easier to visualize and reason over.
 
 It is sometimes important to visualise the SDRs in different forms and make comparsions between them for a better understnding of the learning process. We are going to show you how to output SDRs as: 
 
