@@ -44,26 +44,8 @@ The functions which are used for the SDR representation are listed:
 - `NeoCortexApi.Helpers.StringifyVector`
 - `NeoCortexUtils.DrawBitmap()`
 - `DrawHeatmaps`
-
-## SDR to Bitmap Visualization
-
-While SDRs are powerful, they can be hard to interpret in raw binary form. That's why bitmap visualization is used:
-
-- Bitmaps turn binary SDRs into images where active bits are shown in one color (e.g., grey) and inactive bits in another (e.g., yellow).
-
-- This visual representation allows developers and researchers to:
-
-   - Quickly analyze encoded patterns
-
-   - Debug encoding and learning mechanisms
-
-   - Clearly present results to others, including non-technical audiences
-
-Bitmap Visualization Example:
-
-<img src="https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de" width="450"><br />
-
-
+  
+Before knowing in detail about our topic, We need to know about Encoders which are very important part of SDR generation.
 
 ## Encoder
 
@@ -148,7 +130,23 @@ int[] result = encoder.Encode(input);
 
 The ``ScalarEncoder`` encodes number 99.6 and produces the following output with the previous encoder settings.
 
+## SDR to Bitmap Visualization
 
+While SDRs are powerful, they can be hard to interpret in raw binary form. That's why bitmap visualization is used:
+
+- Bitmaps turn binary SDRs into images where active bits are shown in one color (e.g., grey) and inactive bits in another (e.g., yellow).
+
+- This visual representation allows developers and researchers to:
+
+   - Quickly analyze encoded patterns
+
+   - Debug encoding and learning mechanisms
+
+   - Clearly present results to others, including non-technical audiences
+
+Bitmap Visualization Example:
+
+<img src="https://github.com/Yatish0/neocortexapi_Team_PY/assets/117783043/80c02d24-8dd6-4782-ae58-db0337b531de" width="450"><br />
 
 
 ## DrawBitmap Method
