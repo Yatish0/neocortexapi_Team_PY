@@ -219,7 +219,14 @@ int[,] pixels = {
 ```
 Here, pixels is a two-dimensional array (int[,]) containing pixel values. Each element represents the color intensity at a specific row and column in the image. Accessing a specific pixel, such as the pixel at row 1, column 1 (0), is done using two indices (pixels[1, 1]).
 
-In this document, ```Encode()``` method processes the input and a one-dimensional array (**1-D array**) is generated, and stored in ```result2``` which are SDRs. ```twoDimenArray2``` is then generated from **result2** by converting it into a two-dimensional array(**2-D array**), possibly for visualization or further processing.
+In this document, ```Encode()``` method processes the input and a one-dimensional array (**1-D array**) is generated, and stored in ```result2``` which are SDRs.
+
+```C#
+var result2 = encoder.Encode(inputValue);
+```
+
+```twoDimenArray2``` is then generated from **result2** by converting it into a two-dimensional array(**2-D array**), possibly for visualization or further processing.
+
 ```C#
 int[,] twoDimenArray2 = ArrayUtils.Make2DArray<int>(result2, (int)Math.Sqrt(result2.Length), (int)Math.Sqrt(result2.Length));
 ```
